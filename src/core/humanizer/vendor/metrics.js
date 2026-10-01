@@ -1,0 +1,239 @@
+// Vendored from humanizer-skill by Adam Boudjemaa (MIT): https://github.com/Aboudjem/humanizer-skill
+// cli/lib/metrics.js, converted from CommonJS to ES modules; logic unchanged.
+// @ts-nocheck
+
+import { stripMarked, splitSentences, wordTokens, countSyllables } from './tokenize.js';
+import { lexicalTells } from './vocabulary.js';
+
+function mean(xs) {
+  if (!xs.length) return 0;
+  return xs.reduce((a, b) => a + b, 0) / xs.length;
+}
+
+function stdev(xs) {
+  if (xs.length < 2) return 0;
+  const m = mean(xs);
+  const v = xs.reduce((a, b) => a + (b - m) * (b - m), 0) / xs.length;
+  return Math.sqrt(v);
+}
+
+/** Type-token ratio: unique words / total words. */
+function typeTokenRatio(tokens) {
+  if (!tokens.length) return 0;
+  return new Set(tokens).size / tokens.length;
+}
+
+/**
+ * Moving-average TTR over a window, which is far less length-sensitive than raw
+ * TTR. Falls back to raw TTR for short texts.
+ */
+function mattr(tokens, window = 50) {
+  if (tokens.length <= window) return typeTokenRatio(tokens);
+  let sum = 0;
+  let n = 0;
+  for (let i = 0; i + window <= tokens.length; i++) {
+    sum += new Set(tokens.slice(i, i + window)).size / window;
+    n++;
+  }
+  return sum / n;
+}
+
+/** Fraction of word-trigrams that are repeats (0 = all unique, higher = more repetition). */
+function trigramRepetition(tokens) {
+  if (tokens.length < 3) return 0;
+  const grams = [];
+  for (let i = 0; i + 3 <= tokens.length; i++) {
+    grams.push(tokens[i] + ' ' + tokens[i + 1] + ' ' + tokens[i + 2]);
+  }
+  const unique = new Set(grams).size;
+  return 1 - unique / grams.length;
+}
+
+/** Goh-Barabasi burstiness of sentence lengths, bounded [-1, 1]. */
+function burstinessGB(sentenceLengths) {
+  const s = stdev(sentenceLengths);
+  const m = mean(sentenceLengths);
+  if (s + m === 0) return 0;
+  return (s - m) / (s + m);
+}
+
+function clamp(x, lo, hi) {
+  return Math.max(lo, Math.min(hi, x));
+}
+
+/**
+ * Compute all metrics for a piece of text.
+ * options: { ignoreCode, ignoreQuotes }
+ */
+function analyze(rawText, options = {}) {
+  const text = stripMarked(String(rawText || ''), options);
+  const sentences = splitSentences(text);
+  const tokens = wordTokens(text);
+  const sentenceLengths = sentences.map((s) => wordTokens(s).length);
+  const syllables = tokens.reduce((a, w) => a + countSyllables(w), 0);
+
+  const wordCount = tokens.length;
+  const sentenceCount = sentences.length;
+  const meanLen = mean(sentenceLengths);
+  const sd = stdev(sentenceLengths);
+  const cov = meanLen === 0 ? 0 : sd / meanLen;
+  const ttr = typeTokenRatio(tokens);
+  const mattrVal = mattr(tokens);
+  const trigrams = trigramRepetition(tokens);
+  const wps = sentenceCount === 0 ? 0 : wordCount / sentenceCount;
+  const spw = wordCount === 0 ? 0 : syllables / wordCount;
+  const fkGrade = wordCount === 0 ? 0 : 0.39 * wps + 11.8 * spw - 15.59;
+  const fkEase = wordCount === 0 ? 0 : 206.835 - 1.015 * wps - 84.6 * spw;
+
+  const tooShort = wordCount < 40;
+  const lex = lexicalTells(text, tokens);
+
+  return {
+    wordCount,
+    sentenceCount,
+    meanSentenceLength: round(meanLen, 2),
+    sentenceLengthStdev: round(sd, 2),
+    sentenceLengthCoV: round(cov, 3),
+    burstiness: round(cov, 3), // sentence-length CoV, the human-vs-AI proxy
+    burstinessGB: round(burstinessGB(sentenceLengths), 3),
+    typeTokenRatio: round(ttr, 3),
+    mattr: round(mattrVal, 3),
+    trigramRepetition: round(trigrams, 3),
+    fleschKincaidGrade: round(fkGrade, 1),
+    fleschReadingEase: round(fkEase, 1),
+    vocabTells: lex.tier1 + lex.tier2 + lex.phrases,
+    vocabTellDensity: round(lex.density, 4),
+    shortSample: tooShort,
+  };
+}
+
+function round(x, places) {
+  const f = Math.pow(10, places);
+  return Math.round(x * f) / f;
+}
+
+// Anchor points for mapping raw metrics to 0..1 AI-likelihood components.
+// Documented and adjustable. These are heuristics, not trained thresholds.
+const ANCHORS = {
+  covHuman: 0.66, // CoV at or above this reads fully human on the burstiness axis
+  ttrLow: 0.3, // MATTR at or below this is maximally low-diversity
+  ttrHigh: 0.72, // MATTR at or above this reads fully human
+  repMax: 0.18, // trigram repetition at or above this is maximally repetitive
+  vocabMax: 0.035, // weighted AI-vocab density at or above this is maximally lexical
+};
+
+// Composite weights. Lexical tells carry the most signal on realistic prose;
+// structure fills in the rest. Must sum to 1.
+const WEIGHTS = { burstiness: 0.28, diversity: 0.18, repetition: 0.14, lexical: 0.4 };
+
+/**
+ * The four contributors to the composite score, each with the metric it reads, that
+ * metric's raw value, its clamped 0-1 AI-likelihood, its weight, and the points it
+ * puts on the board. Fixed order, pure arithmetic, no rounding: this is the single
+ * definition of the score, and the display layer rounds a copy of it.
+ */
+function scoreSignals(m, anchors = ANCHORS) {
+  // No text to judge. Empty input must not read as AI or it would false-trip a CI gate.
+  const empty = !m.wordCount;
+  const density = m.vocabTellDensity || 0;
+  const defs = [
+    {
+      name: 'burstiness',
+      metric: 'burstiness',
+      raw: m.burstiness,
+      normalized: empty ? 0 : clamp((anchors.covHuman - m.burstiness) / anchors.covHuman, 0, 1),
+      weight: WEIGHTS.burstiness,
+    },
+    {
+      name: 'diversity',
+      metric: 'mattr',
+      raw: m.mattr,
+      normalized: empty
+        ? 0
+        : clamp((anchors.ttrHigh - m.mattr) / (anchors.ttrHigh - anchors.ttrLow), 0, 1),
+      weight: WEIGHTS.diversity,
+    },
+    {
+      name: 'repetition',
+      metric: 'trigramRepetition',
+      raw: m.trigramRepetition,
+      normalized: empty ? 0 : clamp(m.trigramRepetition / anchors.repMax, 0, 1),
+      weight: WEIGHTS.repetition,
+    },
+    {
+      name: 'lexical',
+      metric: 'vocabTellDensity',
+      raw: density,
+      normalized: empty ? 0 : clamp(density / anchors.vocabMax, 0, 1),
+      weight: WEIGHTS.lexical,
+    },
+  ];
+  for (const d of defs) d.points = d.weight * d.normalized * 100;
+  return defs;
+}
+
+/**
+ * The composite before rounding, 0-100. Sums weight * normalized in signal order and
+ * scales once, which is the original expression rewritten, not a new formula.
+ */
+function aiTellScoreRaw(m, anchors = ANCHORS) {
+  const raw = scoreSignals(m, anchors).reduce((a, s) => a + s.weight * s.normalized, 0);
+  return 100 * raw;
+}
+
+/**
+ * Transparent weighted composite AI-tell score, 0-100 (higher = more AI smell).
+ * lowBurstiness + lowDiversity + highRepetition + lexicalDensity.
+ */
+function aiTellScore(m, anchors = ANCHORS) {
+  return Math.round(aiTellScoreRaw(m, anchors));
+}
+
+function verdict(score) {
+  if (score <= 20) return 'Pristine';
+  if (score <= 40) return 'Mostly human';
+  if (score <= 60) return 'Mixed';
+  if (score <= 80) return 'AI-leaning';
+  return 'Pure AI smell';
+}
+
+function scoreText(rawText, options = {}) {
+  const metrics = analyze(rawText, options);
+  const signals = scoreSignals(metrics);
+  const scoreRaw = 100 * signals.reduce((a, s) => a + s.weight * s.normalized, 0);
+  const score = Math.round(scoreRaw);
+  const label = metrics.wordCount === 0 ? 'No text' : verdict(score);
+  return {
+    metrics,
+    score,
+    scoreRaw: round(scoreRaw, 6),
+    verdict: label,
+    // Rounded for display and for a stable JSON payload. The score above is computed
+    // from the unrounded values, so no rounding here can move it.
+    signals: signals.map((s) => ({
+      name: s.name,
+      metric: s.metric,
+      raw: s.raw,
+      normalized: round(s.normalized, 4),
+      weight: s.weight,
+      points: round(s.points, 3),
+    })),
+  };
+}
+
+export {
+  mean,
+  stdev,
+  typeTokenRatio,
+  mattr,
+  trigramRepetition,
+  burstinessGB,
+  analyze,
+  scoreSignals,
+  aiTellScoreRaw,
+  aiTellScore,
+  verdict,
+  scoreText,
+  ANCHORS,
+  WEIGHTS,
+};

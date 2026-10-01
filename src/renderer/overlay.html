@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'" />
+    <title>AutoTyper overlay</title>
+  </head>
+  <body class="overlay-body">
+    <div class="pill" id="pill">
+      <div class="pill-main">
+        <div class="pill-row">
+          <span class="dot" id="dot"></span>
+          <span class="pill-state" id="state">AutoTyper</span>
+          <span class="pill-target" id="target"></span>
+        </div>
+        <div class="pill-meta" id="meta">—</div>
+        <div class="pill-bar"><div class="pill-fill" id="fill"></div></div>
+      </div>
+      <button class="pill-btn" id="pause" title="Pause / Resume">Pause</button>
+      <button class="pill-btn stop" id="stop" title="Emergency stop">Stop</button>
+    </div>
+    <script type="module" src="/src/overlay.ts"></script>
+  </body>
+</html>
