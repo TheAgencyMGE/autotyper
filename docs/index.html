@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AutoTyper: types code and writing into any app at a human pace</title>
+  <meta name="description" content="AutoTyper is a free, open source Windows app that types code and writing into any app one keystroke at a time, with human pacing, typos and fixes. Great for screencasts, coding tutorials and live demos.">
+  <meta name="keywords" content="auto typer, human typing, typing simulator, autotyper, screencast, coding tutorial, live coding, demo, windows">
+  <link rel="canonical" href="https://theagencymge.github.io/autotyper/">
+  <link rel="icon" type="image/png" href="icon.png">
+  <meta name="theme-color" content="#f6f3ec">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AutoTyper">
+  <meta property="og:description" content="Types your code and writing into any app at a human pace. Free and open source for Windows.">
+  <meta property="og:url" content="https://theagencymge.github.io/autotyper/">
+  <meta property="og:image" content="https://theagencymge.github.io/autotyper/social-preview.png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="640">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AutoTyper">
+  <meta name="twitter:description" content="Types your code and writing into any app at a human pace. Free and open source for Windows.">
+  <meta name="twitter:image" content="https://theagencymge.github.io/autotyper/social-preview.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "AutoTyper",
+    "operatingSystem": "Windows 10, Windows 11",
+    "applicationCategory": "DeveloperApplication",
+    "softwareVersion": "1.0.0",
+    "license": "https://opensource.org/licenses/MIT",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "downloadUrl": "https://github.com/TheAgencyMGE/autotyper/releases/latest",
+    "image": "https://theagencymge.github.io/autotyper/social-preview.png",
+    "description": "Types code and writing into any app one keystroke at a time, with human pacing, typos and fixes."
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Schibsted+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #f6f3ec;
+      --raised: #fbf9f4;
+      --cream: #efebe1;
+      --rule: #e2ddd1;
+      --ink: #23211d;
+      --graphite: #6f6a60;
+      --pencil: #9a9486;
+      --accent: #2a3fb0;
+      --accent-hover: #1f3196;
+      --serif: 'Newsreader', Georgia, serif;
+      --sans: 'Schibsted Grotesk', 'Segoe UI', system-ui, sans-serif;
+      --mono: 'IBM Plex Mono', Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); }
+    img, video { max-width: 100%; display: block; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    header.top { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+    .brand { display: flex; align-items: center; gap: 12px; font-family: var(--serif); font-size: 26px; color: var(--ink); text-decoration: none; }
+    .brand img { width: 36px; height: 36px; }
+    nav a { color: var(--graphite); text-decoration: none; margin-left: 24px; font-size: 15px; }
+    nav a:hover { color: var(--ink); }
+
+    .hero { padding: 72px 0 48px; text-align: center; }
+    .hero h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(48px, 8vw, 96px); line-height: 1.02; letter-spacing: -0.02em; margin: 0 0 24px; }
+    .hero h1 em { font-style: italic; }
+    .caret { display: inline-block; width: 0.06em; height: 0.8em; background: var(--accent); transform: skewX(-12deg) translateY(0.08em); margin-left: 0.04em; animation: blink 1.1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .caret { animation: none; } }
+    .hero p.lede { font-size: 21px; color: var(--graphite); max-width: 640px; margin: 0 auto 36px; }
+
+    .cta { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .btn { display: inline-flex; align-items: center; gap: 10px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 500; font-size: 18px; padding: 16px 30px; border-radius: 8px; transition: background .15s; }
+    .btn:hover { background: var(--accent-hover); }
+    .btn svg { width: 20px; height: 20px; }
+    .meta { font-size: 14px; color: var(--pencil); }
+    .meta a { color: var(--graphite); }
+
+    .demo { margin: 56px auto 0; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 0 var(--rule), 0 40px 80px -40px rgba(35,33,29,.45); background: var(--raised); }
+
+    section { padding: 72px 0; }
+    section + section { border-top: 1px solid var(--rule); }
+    h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(32px, 4.5vw, 46px); line-height: 1.1; letter-spacing: -0.01em; margin: 0 0 16px; }
+    .sub { color: var(--graphite); max-width: 620px; margin: 0 0 40px; }
+
+    .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .mode h3 { font-family: var(--serif); font-weight: 500; font-size: 28px; margin: 20px 0 8px; }
+    .mode p { color: var(--graphite); margin: 0; }
+    .shot { border-radius: 10px; overflow: hidden; border: 1px solid var(--rule); background: var(--raised); }
+
+    .list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 48px; margin: 0; padding: 0; list-style: none; }
+    .list li { border-top: 1px solid var(--rule); padding-top: 16px; }
+    .list strong { display: block; font-weight: 500; margin-bottom: 4px; }
+    .list span { color: var(--graphite); font-size: 16px; }
+    kbd { font-family: var(--mono); font-size: 13px; border: 1px solid var(--rule); border-bottom-width: 2px; border-radius: 4px; padding: 1px 6px; background: var(--raised); }
+
+    .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 18px; max-width: 680px; }
+    .steps li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; }
+    .steps li::before { content: counter(s); font-family: var(--serif); font-size: 26px; color: var(--accent); line-height: 1.2; }
+    .note { margin-top: 32px; padding: 18px 20px; background: var(--cream); border-radius: 8px; font-size: 15px; color: var(--graphite); max-width: 680px; }
+    pre { font-family: var(--mono); font-size: 14px; background: var(--raised); border: 1px solid var(--rule); border-radius: 8px; padding: 16px 18px; overflow-x: auto; }
+
+    footer { border-top: 1px solid var(--rule); padding: 32px 0 48px; color: var(--pencil); font-size: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer a { color: var(--graphite); }
+
+    @media (max-width: 760px) {
+      nav a:not(:last-child) { display: none; }
+      .hero { padding-top: 40px; }
+      .modes, .list { grid-template-columns: 1fr; }
+      section { padding: 56px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="./"><img src="icon.png" alt="">AutoTyper</a>
+      <nav>
+        <a href="#modes">How it works</a>
+        <a href="#install">Install</a>
+        <a href="https://github.com/TheAgencyMGE/autotyper">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="hero">
+        <h1>Describe it.<br><em>Watch it type</em><span class="caret" aria-hidden="true"></span></h1>
+        <p class="lede">AutoTyper types your code and writing into any app, one keystroke at a time. It speeds up, slows down, hits the wrong key and fixes it, the way you would.</p>
+        <div class="cta">
+          <a class="btn" id="download" href="https://github.com/TheAgencyMGE/autotyper/releases/latest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            <span id="download-label">Download for Windows</span>
+          </a>
+          <div class="meta"><span id="download-meta">Free, MIT licensed. Windows 10 and 11.</span> &middot; <a href="https://github.com/TheAgencyMGE/autotyper/releases">All releases</a></div>
+        </div>
+        <video class="demo" src="demo.mp4" poster="screenshots/01-coder-idea.png" autoplay muted loop playsinline width="1920" height="1080" aria-label="AutoTyper demo video"></video>
+      </div>
+
+      <section id="modes">
+        <h2>Two modes, one engine</h2>
+        <p class="sub">Write with an AI you connect, or paste what you already have. Either way you read it over first, pick the app, and watch it get typed.</p>
+        <div class="modes">
+          <div class="mode">
+            <div class="shot"><img src="screenshots/05-coder-workspace.png" alt="AutoCoder with generated HTML ready to type" loading="lazy" width="1800" height="1125"></div>
+            <h3>AutoCoder</h3>
+            <p>Types code into VS Code, Cursor, JetBrains IDEs, Notepad++ and other editors. It copies and edits similar blocks, leaves a TODO and comes back to it, and undoes the editor's auto-closing brackets so the file ends up exactly right.</p>
+          </div>
+          <div class="mode">
+            <div class="shot"><img src="screenshots/08b-writer-tells.png" alt="AutoWriter highlighting phrases that read as AI" loading="lazy" width="1800" height="1125"></div>
+            <h3>AutoWriter</h3>
+            <p>Types documents into Word, Google Docs, Notepad and OneNote. Before it starts, it scores your text and highlights phrases that sound AI-written, with a one-click fix or a full rewrite.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>You stay in control</h2>
+        <p class="sub">It only types where you tell it to, and it stops the moment something looks off.</p>
+        <ul class="list">
+          <li><strong>Confirm first</strong><span>Nothing starts until you confirm the app and window it'll type into.</span></li>
+          <li><strong>Focus guard</strong><span>If you switch windows, typing pauses before a single key lands somewhere else.</span></li>
+          <li><strong>Hands on the keyboard</strong><span>Press a key or click and it pauses right away.</span></li>
+          <li><strong>Emergency stop</strong><span><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>Esc</kbd> from anywhere, or the always-on-top Stop button.</span></li>
+          <li><strong>Your clipboard is safe</strong><span>Anything it copies or pastes gets put back the way it was.</span></li>
+          <li><strong>Works offline</strong><span>Only the AI writing needs a connection. Claude, ChatGPT, Gemini, OpenRouter, or a free local model with Ollama.</span></li>
+        </ul>
+      </section>
+
+      <section id="install">
+        <h2>Install</h2>
+        <ol class="steps">
+          <li><div>Download <a id="download-inline" href="https://github.com/TheAgencyMGE/autotyper/releases/latest">AutoTyper-Setup.exe</a> from the latest release.</div></li>
+          <li><div>Run it and pick where to install. It adds a Start menu and desktop shortcut.</div></li>
+          <li><div>Open AutoTyper, connect an AI if you want one, and type your first file.</div></li>
+        </ol>
+        <p class="note">The installer isn't code-signed yet, so Windows SmartScreen may say it "protected your PC". Click <strong>More info</strong>, then <strong>Run anyway</strong>. The full source is on GitHub if you'd rather build it yourself.</p>
+        <p style="margin-top:32px">Build from source:</p>
+        <pre>git clone https://github.com/TheAgencyMGE/autotyper.git
+cd autotyper
+npm install
+npm run build
+npm start</pre>
+      </section>
+
+      <section>
+        <h2>Use it honestly</h2>
+        <p class="sub" style="margin-bottom:0">AutoTyper is for demos, screencasts, tutorials, presentations, and typing out your own work where pasting is blocked. Don't use it to pass off work as yours where that isn't allowed, like graded coursework or exams with rules about AI.</p>
+      </section>
+    </main>
+
+    <footer>
+      <span>AutoTyper &middot; MIT license</span>
+      <span><a href="https://github.com/TheAgencyMGE/autotyper">Source</a> &middot; <a href="https://github.com/TheAgencyMGE/autotyper/issues">Report a bug</a></span>
+    </footer>
+  </div>
+
+  <script>
+    // Point the download buttons straight at the installer in the latest release.
+    fetch('https://api.github.com/repos/TheAgencyMGE/autotyper/releases/latest')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((rel) => {
+        const exe = rel.assets.find((a) => a.name.endsWith('.exe'))
+        if (!exe) return
+        const mb = Math.round(exe.size / 1048576)
+        document.getElementById('download').href = exe.browser_download_url
+        document.getElementById('download-inline').href = exe.browser_download_url
+        document.getElementById('download-inline').textContent = exe.name
+        document.getElementById('download-label').textContent = 'Download for Windows'
+        document.getElementById('download-meta').textContent = `Version ${rel.tag_name.replace(/^v/, '')} · ${mb} MB · Free, MIT licensed. Windows 10 and 11.`
+      })
+      .catch(() => {})
+  </script>
+</body>
+</html>

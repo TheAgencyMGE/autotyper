@@ -19,7 +19,11 @@
   <img src="docs/demo.gif" width="760" alt="AutoTyper demo: describe an idea, review the code, watch it get typed with real typos and fixes">
 </p>
 
-<p align="center"><a href="docs/demo.mp4">Watch the full demo (MP4, 1080p)</a></p>
+<p align="center">
+  <a href="https://github.com/TheAgencyMGE/autotyper/releases/latest"><b>Download for Windows</b></a> &middot;
+  <a href="https://theagencymge.github.io/autotyper/">Website</a> &middot;
+  <a href="docs/demo.mp4">Full demo (MP4)</a>
+</p>
 
 Tell it what you want and watch it type. AutoTyper puts code or text into the app you pick, one keystroke at a time, the way a person would. It speeds up and slows down, hits the wrong key, notices, backs up and fixes it.
 
@@ -42,6 +46,12 @@ People use it for screencasts, coding tutorials, live demos and presentations, o
 | ![AutoWriter flagging AI phrases](docs/screenshots/08b-writer-tells.png) | ![AutoWriter typing into Word](docs/screenshots/09-writer-typing.png) |
 
 More in [`docs/screenshots`](docs/screenshots).
+
+## Download
+
+Grab `AutoTyper-Setup-1.0.0.exe` from the [latest release](https://github.com/TheAgencyMGE/autotyper/releases/latest), or from the [download page](https://theagencymge.github.io/autotyper/). Windows 10 and 11.
+
+The installer isn't code-signed yet, so SmartScreen may warn you the first time. Click **More info**, then **Run anyway**. If you'd rather not, build it from source below.
 
 ## Quick start
 
@@ -107,7 +117,7 @@ Open them with the gear icon in the top bar.
 npm run dist
 ```
 
-This builds a Windows installer (NSIS) into `dist/`. The app icon comes from `build/icon.png`.
+This builds `dist/AutoTyper-Setup-<version>.exe`, a Windows installer (NSIS). The app icon comes from `build/icon.png`.
 
 ## The typing engine
 

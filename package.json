@@ -1,7 +1,7 @@
 {
   "name": "autotyper",
   "productName": "AutoTyper",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "Types code and writing into any app at a human pace, with typos and fixes. AutoCoder for editors, AutoWriter for documents.",
   "keywords": [
     "typing",
@@ -34,7 +34,10 @@
     "url": "https://github.com/TheAgencyMGE/autotyper/issues"
   },
   "main": "out/main/index.js",
-  "author": "AutoTyper contributors",
+  "author": {
+    "name": "Ryan Panda",
+    "url": "https://github.com/TheAgencyMGE"
+  },
   "license": "MIT",
   "scripts": {
     "dev": "electron-vite dev",
@@ -52,7 +55,8 @@
       "out/**/*"
     ],
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "build/icon.png"
     },
     "mac": {
       "target": "dmg"
@@ -60,7 +64,14 @@
     "linux": {
       "target": "AppImage"
     },
-    "icon": "build/icon.png"
+    "icon": "build/icon.png",
+    "nsis": {
+      "artifactName": "AutoTyper-Setup-${version}.${ext}",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "AutoTyper"
+    }
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.129.0",
