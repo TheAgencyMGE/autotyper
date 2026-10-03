@@ -1,13 +1,47 @@
-# AutoTyper
+<p align="center">
+  <img src="build/icon.png" width="112" alt="AutoTyper logo">
+</p>
 
-Tell it what you want and watch it type. AutoTyper types code and writing into the app you choose at a human pace, with pauses, slips, second thoughts and fixes.
+<h1 align="center">AutoTyper</h1>
 
-It has two modes:
+<p align="center">
+  Types your code and writing into any app at a human pace.<br>
+  Pauses, typos, second thoughts and fixes included.
+</p>
 
-- **AutoCoder.** Describe an idea and have an AI write the code, or paste code you already have. It types into VS Code, Cursor, JetBrains IDEs, Notepad++ and other editors.
-- **AutoWriter.** Describe a document and have an AI draft it, or paste your own text. It types into Word, Google Docs, Notepad, OneNote and other document apps. It also flags phrases that read as AI-written and can rewrite them to sound like a person.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2a3fb0" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/platform-Windows-23211d" alt="Windows">
+  <img src="https://img.shields.io/badge/built%20with-Electron%20%2B%20React-6f6a60" alt="Electron and React">
+</p>
 
-AutoTyper is free and open source (MIT). Writing and rewriting use an AI service you connect: Claude, ChatGPT (OpenAI), Gemini, OpenRouter, or a free model running on your own computer with Ollama. Everything else works offline, including pasting your own code or text, the typing engine, and the writing score and quick fix.
+<p align="center">
+  <img src="docs/demo.gif" width="760" alt="AutoTyper demo: describe an idea, review the code, watch it get typed with real typos and fixes">
+</p>
+
+<p align="center"><a href="docs/demo.mp4">Watch the full demo (MP4, 1080p)</a></p>
+
+Tell it what you want and watch it type. AutoTyper puts code or text into the app you pick, one keystroke at a time, the way a person would. It speeds up and slows down, hits the wrong key, notices, backs up and fixes it.
+
+There are two modes.
+
+**AutoCoder** writes code from a description (or takes code you paste) and types it into VS Code, Cursor, JetBrains IDEs, Notepad++ or whatever editor you use.
+
+**AutoWriter** does the same for documents: Word, Google Docs, Notepad, OneNote. It also points out phrases that sound AI-written and can rewrite them so they read like a person wrote them.
+
+It's free and MIT licensed. The AI part uses a service you connect: Claude, ChatGPT, Gemini, OpenRouter, or a free local model through Ollama. Everything else works offline, including pasting your own code or text, the typing engine and the writing score.
+
+People use it for screencasts, coding tutorials, live demos and presentations, or to type out their own work somewhere that blocks pasting.
+
+## Screenshots
+
+| Describe what to build | Review before it types |
+| --- | --- |
+| ![AutoCoder start screen](docs/screenshots/01-coder-idea.png) | ![Generated code ready to type](docs/screenshots/05-coder-workspace.png) |
+| **Spot what reads as AI** | **Watch it type, stop any time** |
+| ![AutoWriter flagging AI phrases](docs/screenshots/08b-writer-tells.png) | ![AutoWriter typing into Word](docs/screenshots/09-writer-typing.png) |
+
+More in [`docs/screenshots`](docs/screenshots).
 
 ## Quick start
 
@@ -57,6 +91,23 @@ When you connect a key, AutoTyper first checks it with the provider, so a typo i
 | Held modifiers | While you hold Ctrl, Alt, Shift or Win, typing waits so no shortcut fires by accident. |
 | Emergency stop | `Ctrl+Alt+Esc` from anywhere (configurable), the Stop button, or the always-on-top Stop pill, which never takes focus. |
 | Clipboard | Simulated copy and paste saves everything on your clipboard first (text and formatting) and puts it back afterwards. |
+
+## Settings
+
+Open them with the gear icon in the top bar.
+
+- Change the stop and pause hotkeys.
+- Set the countdown before typing starts.
+- Turn editor-safe mode on or off (see below).
+- Hide AutoTyper from screen sharing. Its own windows drop out of screen shares, recordings and screenshots, so if you're recording a tutorial, viewers see the code appear in your editor and not the control panel driving it. The typing itself still shows up, since that happens in the other app.
+
+## Building an installer
+
+```bash
+npm run dist
+```
+
+This builds a Windows installer (NSIS) into `dist/`. The app icon comes from `build/icon.png`.
 
 ## The typing engine
 
@@ -165,11 +216,32 @@ It:
 
 Its windows sit off the edge of the screen, so you won't see it. Don't type or click while it runs: AutoTyper notices, pauses, and the test starts that run again.
 
-To regenerate the UI screenshots for design review:
+To regenerate the screenshots in `docs/screenshots`:
 
 ```bash
-node scripts/screenshots.mjs
+npm run build
+node scripts/screenshots.mjs docs/screenshots
 ```
+
+## Demo video and logo
+
+The demo video, app icon and social preview image are made with [Remotion](https://www.remotion.dev) in [`video/`](video). To edit them, open the studio:
+
+```bash
+cd video
+npm install
+npx remotion studio
+```
+
+To render them again:
+
+```bash
+npx remotion render Demo out/demo.mp4
+npx remotion still Icon out/icon.png --image-format=png
+npx remotion still Social out/social.png --image-format=png
+```
+
+Remotion has its own license. It's free for individuals and small teams, see [remotion.dev/license](https://www.remotion.dev/license).
 
 ## Credits
 

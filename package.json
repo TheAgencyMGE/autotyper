@@ -2,7 +2,37 @@
   "name": "autotyper",
   "productName": "AutoTyper",
   "version": "2.0.0",
-  "description": "Type code and writing into any app at a human pace. AutoCoder for code, AutoWriter for documents.",
+  "description": "Types code and writing into any app at a human pace, with typos and fixes. AutoCoder for editors, AutoWriter for documents.",
+  "keywords": [
+    "typing",
+    "auto-typer",
+    "human-typing",
+    "typing-simulator",
+    "autotyper",
+    "screencast",
+    "coding-tutorial",
+    "live-coding",
+    "demo",
+    "electron",
+    "react",
+    "typescript",
+    "ai",
+    "claude",
+    "openai",
+    "gemini",
+    "ollama",
+    "openrouter",
+    "humanizer",
+    "windows"
+  ],
+  "homepage": "https://github.com/TheAgencyMGE/autotyper#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheAgencyMGE/autotyper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TheAgencyMGE/autotyper/issues"
+  },
   "main": "out/main/index.js",
   "author": "AutoTyper contributors",
   "license": "MIT",
@@ -29,7 +59,8 @@
     },
     "linux": {
       "target": "AppImage"
-    }
+    },
+    "icon": "build/icon.png"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.129.0",
