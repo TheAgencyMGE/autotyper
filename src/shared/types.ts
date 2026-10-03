@@ -139,6 +139,8 @@ export interface Settings {
   }
   /** Neutralise editor auto-close/auto-indent/IntelliSense so the final text matches exactly. */
   editorSafeMode: boolean
+  /** Hide AutoTyper's windows from screen sharing and capture. */
+  hideFromScreenShare: boolean
   countdownSeconds: number
   lastProjectDir?: string
   /** Last used mode. */
@@ -259,6 +261,8 @@ export interface AutoTyperApi {
   settings: {
     get(): Promise<Settings>
     update(patch: SettingsPatch): Promise<Settings>
+    /** Settings the main process changed on its own. */
+    onChanged(cb: (settings: Settings) => void): () => void
   }
   ai: {
     status(): Promise<ProviderStatus[]>

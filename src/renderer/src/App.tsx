@@ -179,7 +179,8 @@ export default function App() {
       }),
       api.onHotkey((e) => {
         if (e.action === 'stop') notify('Stopped with the shortcut. Nothing more will be typed.')
-      })
+      }),
+      api.settings.onChanged((s) => setSettings(s))
     ]
     return () => offs.forEach((off) => off())
   }, [refreshWindows, notify])

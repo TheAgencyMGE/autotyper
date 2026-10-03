@@ -11,7 +11,8 @@ function subscribe<T>(channel: string, cb: (payload: T) => void): () => void {
 const api: AutoTyperApi & { overlayAction(action: 'stop' | 'pauseResume'): void } = {
   settings: {
     get: () => ipcRenderer.invoke(IPC.settingsGet),
-    update: (patch) => ipcRenderer.invoke(IPC.settingsUpdate, patch)
+    update: (patch) => ipcRenderer.invoke(IPC.settingsUpdate, patch),
+    onChanged: (cb) => subscribe(IPC.settingsChanged, cb)
   },
   ai: {
     status: () => ipcRenderer.invoke(IPC.aiStatus),

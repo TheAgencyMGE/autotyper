@@ -14,6 +14,8 @@ export class Overlay {
   private win: BrowserWindow | null = null
   private hideTimer: NodeJS.Timeout | null = null
 
+  constructor(private readonly onCreated?: (win: BrowserWindow) => void) {}
+
   private ensure(): BrowserWindow {
     if (this.win && !this.win.isDestroyed()) return this.win
     const area = screen.getPrimaryDisplay().workArea
@@ -34,6 +36,7 @@ export class Overlay {
       webPreferences: { preload: join(__dirname, '../preload/index.js'), sandbox: true, contextIsolation: true }
     })
     this.win.setAlwaysOnTop(true, 'screen-saver')
+    this.onCreated?.(this.win)
     if (process.env.ELECTRON_RENDERER_URL) void this.win.loadURL(`${process.env.ELECTRON_RENDERER_URL}/overlay.html`)
     else void this.win.loadFile(join(__dirname, '../renderer/overlay.html'))
     return this.win

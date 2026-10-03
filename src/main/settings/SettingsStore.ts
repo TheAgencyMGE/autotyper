@@ -25,6 +25,7 @@ const defaults = (): StoredSettings => ({
   codegen: { provider: 'anthropic', model: DEFAULT_MODEL },
   hotkeys: { stop: 'Control+Alt+Escape', pauseResume: 'Control+Alt+P' },
   editorSafeMode: true,
+  hideFromScreenShare: false,
   countdownSeconds: 3,
   mode: 'code'
 })

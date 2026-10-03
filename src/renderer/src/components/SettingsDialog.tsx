@@ -15,6 +15,7 @@ export function SettingsDialog({ settings, providers, onManageAi, onSave, onClos
   const [pause, setPause] = useState(settings.hotkeys.pauseResume)
   const [editorSafe, setEditorSafe] = useState(settings.editorSafeMode)
   const [countdown, setCountdown] = useState(settings.countdownSeconds)
+  const [hideShare, setHideShare] = useState(settings.hideFromScreenShare)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -22,7 +23,7 @@ export function SettingsDialog({ settings, providers, onManageAi, onSave, onClos
     setSaving(true)
     setError(null)
     try {
-      await onSave({ hotkeys: { stop: stop.trim(), pauseResume: pause.trim() }, editorSafeMode: editorSafe, countdownSeconds: countdown })
+      await onSave({ hotkeys: { stop: stop.trim(), pauseResume: pause.trim() }, editorSafeMode: editorSafe, hideFromScreenShare: hideShare, countdownSeconds: countdown })
       onClose()
     } catch (e) {
       setError((e as Error).message)
@@ -79,6 +80,17 @@ export function SettingsDialog({ settings, providers, onManageAi, onSave, onClos
                 <span className="small">Code editors add closing brackets, indentation and suggestions as you type. This undoes them so the result matches exactly. Leave it on.</span>
               </span>
               <input type="checkbox" checked={editorSafe} onChange={(e) => setEditorSafe(e.target.checked)} />
+            </label>
+          </section>
+
+          <section className="modal-section">
+            <h3 className="section-title">Screen sharing</h3>
+            <label className="switch">
+              <span className="switch-text">
+                <span>Hide AutoTyper from screen sharing</span>
+                <span className="small">AutoTyper's windows won't appear in screen shares, recordings or screenshots.</span>
+              </span>
+              <input type="checkbox" checked={hideShare} onChange={(e) => setHideShare(e.target.checked)} />
             </label>
           </section>
           {error && <p className="note" style={{ color: 'var(--brick)' }}>{error}</p>}

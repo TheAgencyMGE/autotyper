@@ -12,6 +12,7 @@ import { registerIpc } from './ipc'
 import { Logger } from './logging/Logger'
 import { Overlay } from './overlay'
 import { ProjectService } from './project/ProjectService'
+import { ScreenShareGuard } from './screenShare'
 import { SettingsStore } from './settings/SettingsStore'
 import { TypingController } from './typing/TypingController'
 
@@ -47,10 +48,15 @@ if (!app.requestSingleInstanceLock()) {
   const ai = new AiConnections(settings, log)
   const codegen = new CodegenService(settings, ai, project, log)
   const humanizer = new HumanizerService(ai, log)
-  const overlay = new Overlay()
+  let screenShare: ScreenShareGuard | null = null
+  const overlay = new Overlay((win) => screenShare?.track(win))
 
   const broadcast = (channel: string, payload: unknown) => {
     for (const w of BrowserWindow.getAllWindows()) if (!w.isDestroyed()) w.webContents.send(channel, payload)
+  }
+
+  const applyScreenShare = () => {
+    screenShare?.setHidden(settings.get().hideFromScreenShare)
   }
 
   let registeredHotkeys = ''
@@ -92,6 +98,7 @@ if (!app.requestSingleInstanceLock()) {
         nodeIntegration: false
       }
     })
+    screenShare?.track(mainWindow)
     mainWindow.once('ready-to-show', () => mainWindow?.show())
     mainWindow.on('closed', () => {
       mainWindow = null
@@ -134,10 +141,15 @@ if (!app.requestSingleInstanceLock()) {
       typing,
       log,
       getMainWindow: () => mainWindow,
-      onSettingsChanged: applyHotkeys
+      onSettingsChanged: () => {
+        applyHotkeys()
+        applyScreenShare()
+      }
     })
+    screenShare = new ScreenShareGuard()
     createWindow()
     applyHotkeys()
+    applyScreenShare()
     log.info('app', `AutoTyper ${app.getVersion()} ready · automation: ${backend.name}`)
     void ai.refresh()
     try {
@@ -153,6 +165,7 @@ if (!app.requestSingleInstanceLock()) {
     globalShortcut.unregisterAll()
     backend.dispose()
     overlay.destroy()
+    screenShare?.dispose()
   })
 
   app.on('window-all-closed', () => app.quit())

@@ -2,6 +2,7 @@
 export const IPC = {
   settingsGet: 'settings:get',
   settingsUpdate: 'settings:update',
+  settingsChanged: 'settings:changed',
   aiStatus: 'ai:status',
   aiRefresh: 'ai:refresh',
   aiConnect: 'ai:connect',
